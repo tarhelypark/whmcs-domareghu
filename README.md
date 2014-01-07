@@ -1,4 +1,4 @@
 whmcs-hureg
 ===========
 
-.hu domain registration plugin for whmcs
+.hu domain registration plugin for whmcs and domareg.hu

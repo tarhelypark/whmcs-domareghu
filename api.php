@@ -1,15 +1,15 @@
 <?php
 /**
- * HuReg API calls object
+ * domareg.hu API calls object
  *
  * @author Péter Képes
  * @version V1.0
  * @copyright Tárhelypark.hu, 06 February, 2013
  **/
 
-define('SERVER_URL', 'http://80.98.242.164:8080/api/');
+define('SERVER_URL', 'http://192.168.0.245:3000/api/');
 
-class HuregApi {
+class DomareghuApi {
   private $ch; 
   
   /**
@@ -52,7 +52,7 @@ class HuregApi {
     $result = curl_exec($this->ch);
     $info = curl_getinfo($this->ch);
     
-    if($result === false || is_null($result) || $result === "" || $info['http_code'] != 201) {
+    if($result === false || is_null($result) || $result === "" || $info['http_code'] < 200 || $info['http_code'] > 202) {
       $eresult=array();
       $eresult["error"] = true;
       $eresult["error_code"] = 100; 
