@@ -24,7 +24,7 @@ class Register {
   public $address;            // user's address with street number
   public $city;               // 'Budapest'
   public $zip;                // 1234
-  public $country_code;       // ex.: HU      
+  public $country_code;       // ex.: HU
   public $phone;              // Free text
   public $note;               // Free text
   public $md5_password;       // MD5 coded password
@@ -32,6 +32,7 @@ class Register {
   public $idcard_nr;          // free text
   public $idcard_expire;      // 2022.11.28
   public $birth_date;         // 2022.11.28
+  public $period;             // Recurring time in years (ex.: 3)
 }
 
 /**
@@ -43,4 +44,17 @@ class Register {
 class QueryDomain {
   public $api_key;            // domareg.hu api key
   public $name;               // Domain name
+}
+
+/**
+ * Syncronize object
+ *
+ * @author Péter Képes
+ **/
+class Syncronize extends Register {
+  public $status;         // Status (I, M, R, A, C, D, E)
+  public $expiry_date;    // Domain expiration date
+  public $payed;          // 0/1
+  public $reg_date;
+  public $type;           // R: Register T: Transfer
 }

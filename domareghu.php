@@ -33,7 +33,7 @@ function domareghu_GetNameservers($params) {
 
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
-	$response = $api->sendCommand('getNameServers', $q);
+	$response = $api->sendCommand('get_nameservers', $q);
 	$api->closeHttpConnection();
 
 	# Put your code to get the nameservers here and return the values below
@@ -298,10 +298,10 @@ function domareghu_TransferSync($params) {
 function domareghu_Sync($params) {
 
   # Query domain expiry information
+  $params['name'] = $params['sld'] . '.' . $params['tld'];
   $q = new QueryDomain();
   $q->api_key = $params['api_key'];
-  $q->sld = $params['sld'];
-  $q->tld = $params['tld'];
+  $q->name = $params['name'];
 
   $values = array();
 
@@ -352,7 +352,6 @@ function domareghu_getRegisterObj($params, $from_database = false) {
 
   $params['name'] = $params['sld'] . '.' . $params['tld'];
   if ($from_database) {
-    echo "aaaa";
     $result = select_query("tbldomains","","id = " . $params["domainid"]);
     $domain = mysql_fetch_assoc($result);
 
@@ -373,6 +372,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
     $params['phonenumber'] = $client['phonenumber'];
     $params['notes'] = $client['notes'];
     $params['password'] = $client['password'];
+    $params['registrationperiod'] = $domain['registrationperiod'];
   }
 
   $r = new Register();
@@ -391,6 +391,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
   $r->phone = $params['phonenumber'];
   $r->note = $params['notes'];
   $r->md5_password = $params['password'];
+  $r->period = $params['registrationperiod'];
 
   if ($params['use_custom_fields'] == 'yes') {
     $r->vatnr = $params['customfields' . $params['custom_field_vatnr']];
