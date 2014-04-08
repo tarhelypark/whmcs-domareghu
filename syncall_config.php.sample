@@ -1,0 +1,10 @@
+<?php
+
+define('DOMAREG_API_KEY', 'Change this!');
+
+define('WHMCS_CONFIG', '../../../configuration.php');
+define('DOMAREG_USE_CUSTOM_FIELDS', 'yes');          // yes/no
+define('DOMAREG_CUSTOM_FIELD_VATNR', '1');
+define('DOMAREG_CUSTOM_FIELD_IDCARD_NR', '2');
+define('DOMAREG_CUSTOM_FIELD_IDCARD_EXPIRE', '3');
+define('DOMAREG_CUSTOM_FIELD_BIRTH_DATE', '5');
