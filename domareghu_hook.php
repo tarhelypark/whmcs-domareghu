@@ -28,17 +28,15 @@ function sendNewDomainToDomaregHu($vars) {
       $userId = $domainData["userid"];
 
       if(endsWith(strtolower($domainName), ".hu")) {
-        if ($domainData["type"] == 'Register') {
-          $table = "tbldomains";
-          $update = array("registrar"=>"domareghu");
-          $where = array("id"=>$domainData["id"]);
-          update_query($table,$update,$where);
+        $table = "tbldomains";
+        $update = array("registrar"=>"domareghu");
+        $where = array("id"=>$domainData["id"]);
+        update_query($table,$update,$where);
 
-          $command = "domainrequestepp";
-          $adminuser = $apiUsername;
-          $values["domainid"] = $domain;
-          $results = localAPI($command,$values,$adminuser);
-        }
+        $command = "domainrequestepp";
+        $adminuser = $apiUsername;
+        $values["domainid"] = $domain;
+        $results = localAPI($command,$values,$adminuser);
       }
     }
   }

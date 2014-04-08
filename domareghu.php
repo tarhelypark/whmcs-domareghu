@@ -110,39 +110,31 @@ function domareghu_RegisterDomain($params) {
 }
 
 function domareghu_TransferDomain($params) {
-	$username = $params["Username"];
-	$password = $params["Password"];
-	$testmode = $params["TestMode"];
-	$tld = $params["tld"];
-	$sld = $params["sld"];
-	$regperiod = $params["regperiod"];
-	$transfersecret = $params["transfersecret"];
-	$nameserver1 = $params["ns1"];
-	$nameserver2 = $params["ns2"];
-	# Registrant Details
-	$RegistrantFirstName = $params["firstname"];
-	$RegistrantLastName = $params["lastname"];
-	$RegistrantAddress1 = $params["address1"];
-	$RegistrantAddress2 = $params["address2"];
-	$RegistrantCity = $params["city"];
-	$RegistrantStateProvince = $params["state"];
-	$RegistrantPostalCode = $params["postcode"];
-	$RegistrantCountry = $params["country"];
-	$RegistrantEmailAddress = $params["email"];
-	$RegistrantPhone = $params["phonenumber"];
-	# Admin Details
-	$AdminFirstName = $params["adminfirstname"];
-	$AdminLastName = $params["adminlastname"];
-	$AdminAddress1 = $params["adminaddress1"];
-	$AdminAddress2 = $params["adminaddress2"];
-	$AdminCity = $params["admincity"];
-	$AdminStateProvince = $params["adminstate"];
-	$AdminPostalCode = $params["adminpostcode"];
-	$AdminCountry = $params["admincountry"];
-	$AdminEmailAddress = $params["adminemail"];
-	$AdminPhone = $params["adminphonenumber"];
+  echo "<pre>";
+  echo "domareghu_TransferDomain 1\n";
+  var_dump($params);
 
+  $r = domareghu_getRegisterObj($params);
 
+  echo "domareghu_TransferDomain 2\n";
+  var_dump($r);
+
+	$api = new DomareghuApi();
+	$api->openHttpConnection();
+	$response = $api->sendCommand('transfer', $r);
+	$api->closeHttpConnection();
+
+	if ($response['error'] == true) {
+	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
+	} else {
+    $table = "tbldomains";
+    $update = array("status"=>"Active");
+    $where = array("id"=>$params['domainid']);
+    update_query($table,$update,$where);
+	}
+
+	echo "</pre>";
+	return $values;
 }
 
 function domareghu_RenewDomain($params) {
@@ -196,15 +188,16 @@ function domareghu_SaveContactDetails($params) {
 
 function domareghu_GetEPPCode($params) {
   echo "<pre>";
-  echo "domareghu_GetEPPCode 1¨\n";
   var_dump($params);
   $r = domareghu_getRegisterObj($params, true);
   $r->payed = 0;
-  var_dump($r);
-  echo "domareghu_GetEPPCode 2\n";
   $api = new DomareghuApi();
 	$api->openHttpConnection();
-	$response = $api->sendCommand('register', $r);
+  if ($params["regtype"] == 'Register') {
+	  $response = $api->sendCommand('register', $r);
+  } else {
+    $response = $api->sendCommand('transfer', $r);
+  }
 	$api->closeHttpConnection();
 
   if ($response['error'] == true) {
@@ -250,39 +243,42 @@ function domareghu_DeleteNameserver($params) {
 }
 
 function domareghu_TransferSync($params) {
-
-  # Your available parameters are:
-  $params['domainid'];
-  $params['domain'];
-  $params['sld'];
-  $params['tld'];
-  $params['registrar'];
-  $params['regperiod'];
-  $params['status'];
-  $params['dnsmanagement'];
-  $params['emailforwarding'];
-  $params['idprotection'];
-
-  # Other parameters used in your _getConfigArray() function would also be available for use in this function
-
-  # Put your code to check on the domain transfer status here
-  $api = new DomareghuApi();
- 	$api->openHttpConnection();
- 	$response = $api->sendCommand('getNameServers', $params);
- 	$api->closeHttpConnection();
+  $params['name'] = $params['sld'] . '.' . $params['tld'];
+  $q = new QueryDomain();
+  $q->api_key = $params['api_key'];
+  $q->name = $params['name'];
 
   $values = array();
 
-  # - if the transfer has completed successfully
-  $values['completed'] = true; #  when transfer completes successfully
-  $values['expirydate'] = '2013-10-28'; # the expiry date of the domain (if available)
+ 	$api = new DomareghuApi();
+ 	$api->openHttpConnection();
+ 	$response = $api->sendCommand('get_expiry', $q);
+  $api->closeHttpConnection();
 
-  # - or if failed
-  $values['failed'] = true; # when transfer fails permenantly
-  $values['reason'] = "Reason here..."; # reason for the transfer failing (if available) - a generic failure reason is given if no reason is returned
+  $values = array();
 
-  # - or if errored
-  $values['error'] = "Message here..."; # error if the check fails - for example domain not found
+  if ($response['error'] == true) {
+    # TODO Nem tudunk olyan hibakódot visszaadni, amivel megkülönböztethető
+    # a kommunikciós hiba és az, hogy a domain törölve van már
+    # Szerver oldalon kell először olyan választ adni amiből négy eset deríthető ki:
+    # 1. Minden ok, a domain aktív
+    # 2. A domain a rendszerben van, de még nincsen regisztrálva, halad felé
+    # 3. A domain törölve van a rendszerből de benne volt
+    # 4. A domain nincs a rendszerben
+
+    # Error
+    #if ($response['error_code'] == 100) {
+      # Error in communication
+      $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
+    #} else {
+      #$values['failed'] = true; # when transfer fails permenantly
+      #$values['reason'] = $response['error_message']; # reason for the transfer failing (if available) - a generic failure reason is given if no reason is returned
+    #}
+  } else {
+    # - if the transfer has completed successfully
+    $values['completed'] = true; #  when transfer completes successfully
+ 	  $values['expirydate'] = $response['expiry_date'];
+  }
 
   return $values; # return the details of the sync
 }
@@ -296,7 +292,6 @@ function domareghu_TransferSync($params) {
  * @author Péter Képes
  **/
 function domareghu_Sync($params) {
-
   # Query domain expiry information
   $params['name'] = $params['sld'] . '.' . $params['tld'];
   $q = new QueryDomain();
@@ -307,12 +302,12 @@ function domareghu_Sync($params) {
 
  	$api = new DomareghuApi();
  	$api->openHttpConnection();
- 	$response = $api->sendCommand('getExpiry', $q);
+ 	$response = $api->sendCommand('get_expiry', $q);
 
   # If domain not found we should add it to domareg.hu
  	if ($response['error'] == true) {
  	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
- 	      $response = $api->sendCommand('addDomain', $r);
+ 	  #$response = $api->sendCommand('add_domain', $q);
 
     /*gdomareghu_getRegisterObj($params, true);
     # Check if addation is successed
@@ -334,9 +329,7 @@ function domareghu_Sync($params) {
  	  $values['expired'] = $response['expired'] == 1;
  	  $values['expirydate'] = $response['expiry_date'];
  	}
-
- 	$api->closeHttpConnection();
-
+  $api->closeHttpConnection();
   return $values;
 }
 
@@ -372,7 +365,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
     $params['phonenumber'] = $client['phonenumber'];
     $params['notes'] = $client['notes'];
     $params['password'] = $client['password'];
-    $params['registrationperiod'] = $domain['registrationperiod'];
+    $params['regperiod'] = $domain['registrationperiod'];
   }
 
   $r = new Register();
@@ -391,7 +384,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
   $r->phone = $params['phonenumber'];
   $r->note = $params['notes'];
   $r->md5_password = $params['password'];
-  $r->period = $params['registrationperiod'];
+  $r->period = $params['regperiod'];
 
   if ($params['use_custom_fields'] == 'yes') {
     $r->vatnr = $params['customfields' . $params['custom_field_vatnr']];
