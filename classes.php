@@ -58,3 +58,15 @@ class Syncronize extends Register {
   public $reg_date;
   public $type;           // R: Register T: Transfer
 }
+
+/**
+ * Domain renew object
+ *
+ * @author Péter Képes
+ **/
+class Renew {
+  public $api_key;            // domareg api key
+  public $name;               // Domain name
+  public $period;             // Recurring time in years (ex.: 3)
+}
+

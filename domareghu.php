@@ -130,7 +130,7 @@ function domareghu_TransferDomain($params) {
     $table = "tbldomains";
     $update = array("status"=>"Active");
     $where = array("id"=>$params['domainid']);
-    update_query($table,$update,$where);
+    #update_query($table,$update,$where);
 	}
 
 	echo "</pre>";
@@ -138,15 +138,21 @@ function domareghu_TransferDomain($params) {
 }
 
 function domareghu_RenewDomain($params) {
-	$username = $params["Username"];
-	$password = $params["Password"];
-	$testmode = $params["TestMode"];
-	$tld = $params["tld"];
-	$sld = $params["sld"];
-	$regperiod = $params["regperiod"];
-	# Put your code to renew domain here
-	# If error, return the error message in the value below
-	$values["error"] = $error;
+  $r = new Renew();
+  $r->api_key = $params['api_key'];
+  $r->name = $params['sld'] . '.' . $params['tld'];
+  $r->period = $params["regperiod"];
+  echo "<pre>";
+	$api = new DomareghuApi();
+	$api->openHttpConnection();
+	$response = $api->sendCommand('renew', $r);
+	$api->closeHttpConnection();
+
+	if ($response['error'] == true) {
+	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
+	}
+
+  echo "</pre>";
 	return $values;
 }
 

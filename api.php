@@ -7,7 +7,7 @@
  * @copyright Tárhelypark.hu, 06 February, 2013
  **/
 
-define('SERVER_URL', 'http://192.168.1.134:3000/api/');
+define('SERVER_URL', 'http://192.168.0.8:3000/api/');
 #define('SERVER_URL', 'http://192.168.0.8:3000/api/');
 
 class DomareghuApi {
