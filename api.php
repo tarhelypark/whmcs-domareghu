@@ -7,12 +7,15 @@
  * @copyright Tárhelypark.hu, 06 February, 2013
  **/
 
-define('SERVER_URL', 'http://192.168.0.8:3000/api/');
-#define('SERVER_URL', 'http://192.168.0.8:3000/api/');
+define('SERVER_URL', 'http://ugyfel.domareg.hu/api/');
 
 class DomareghuApi {
   private $ch;
+  private $api_url;
 
+  function __construct($api_url = SERVER_URL) {
+    $this->api_url = $api_url;
+  }
   /**
    * opens a HTTP connection
    * All commands send with one conection for performance reason
@@ -47,7 +50,7 @@ class DomareghuApi {
    * @author Péter Képes
    **/
   function sendCommand($command, $data) {
-    curl_setopt($this->ch,CURLOPT_URL,SERVER_URL . $command);
+    curl_setopt($this->ch,CURLOPT_URL,$this->api_url . $command);
     curl_setopt($this->ch,CURLOPT_POSTFIELDS,json_encode($data));
 
     $result = curl_exec($this->ch);

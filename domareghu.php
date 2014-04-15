@@ -12,6 +12,7 @@ require_once('classes.php');
 function domareghu_getConfigArray() {
 	$configarray = array(
 	 "api_key" => array( "Type" => "text", "Size" => "50", "Description" => "Enter your API key here", ),
+   "api_url" => array( "Type" => "text", "Size" => "100", "Description" => "API url for domareg.hu", "Default" => "http://ugyfel.domareg.hu/api/"),
 	 "use_custom_fields" => array( "Type" => "yesno", "Description" => "Use custom customer's fileds"),
 	 "custom_field_vatnr" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of vat nr" ),
 	 "custom_field_idcard_nr" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of customer's idcard nr"),
@@ -31,7 +32,7 @@ function domareghu_GetNameservers($params) {
 
   var_dump($q);
 
-	$api = new DomareghuApi();
+	$api = new DomareghuApi($params['api_url']);
 	$api->openHttpConnection();
 	$response = $api->sendCommand('get_nameservers', $q);
 	$api->closeHttpConnection();
@@ -96,7 +97,7 @@ function domareghu_RegisterDomain($params) {
   echo "domareghu_RegisterDomain 2\n";
   var_dump($r);
 
-	$api = new DomareghuApi();
+	$api = new DomareghuApi($params['api_url']);
 	$api->openHttpConnection();
 	$response = $api->sendCommand('register', $r);
 	$api->closeHttpConnection();
@@ -119,7 +120,7 @@ function domareghu_TransferDomain($params) {
   echo "domareghu_TransferDomain 2\n";
   var_dump($r);
 
-	$api = new DomareghuApi();
+	$api = new DomareghuApi($params['api_url']);
 	$api->openHttpConnection();
 	$response = $api->sendCommand('transfer', $r);
 	$api->closeHttpConnection();
@@ -143,7 +144,7 @@ function domareghu_RenewDomain($params) {
   $r->name = $params['sld'] . '.' . $params['tld'];
   $r->period = $params["regperiod"];
   echo "<pre>";
-	$api = new DomareghuApi();
+	$api = new DomareghuApi($params['api_url']);
 	$api->openHttpConnection();
 	$response = $api->sendCommand('renew', $r);
 	$api->closeHttpConnection();
@@ -197,7 +198,7 @@ function domareghu_GetEPPCode($params) {
   var_dump($params);
   $r = domareghu_getRegisterObj($params, true);
   $r->payed = 0;
-  $api = new DomareghuApi();
+  $api = new DomareghuApi($params['api_url']);
 	$api->openHttpConnection();
   if ($params["regtype"] == 'Register') {
 	  $response = $api->sendCommand('register', $r);
@@ -256,7 +257,7 @@ function domareghu_TransferSync($params) {
 
   $values = array();
 
- 	$api = new DomareghuApi();
+ 	$api = new DomareghuApi($params['api_url']);
  	$api->openHttpConnection();
  	$response = $api->sendCommand('get_expiry', $q);
   $api->closeHttpConnection();
@@ -306,7 +307,7 @@ function domareghu_Sync($params) {
 
   $values = array();
 
- 	$api = new DomareghuApi();
+ 	$api = new DomareghuApi($params['api_url']);
  	$api->openHttpConnection();
  	$response = $api->sendCommand('get_expiry', $q);
 
