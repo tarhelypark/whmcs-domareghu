@@ -52,14 +52,14 @@ class DomareghuApi {
   function sendCommand($command, $data) {
     curl_setopt($this->ch,CURLOPT_URL,$this->api_url . $command);
     curl_setopt($this->ch,CURLOPT_POSTFIELDS,json_encode($data));
-
+    curl_setopt($this->ch,CURLOPT_TIMEOUT,20);
     $result = curl_exec($this->ch);
     $info = curl_getinfo($this->ch);
 
     if($result === false || is_null($result) || $result === "" || $info['http_code'] < 200 || $info['http_code'] > 202) {
       $eresult=array();
       $eresult["error"] = true;
-      $eresult["error_code"] = 100;
+      $eresult["error_code"] = $info['http_code'];
       $eresult["error_message"] = "Domain regisztrációs hiba!</br>";
       if ($info['http_code'] != 0)
         $eresult["error_message"] .= 'HTTP response code: ' . $info['http_code'] . "<br/>";

@@ -55,10 +55,13 @@ function domareghu_sync_all_hu_domain() {
     $response = $api->sendCommand('get_domain', $s);
 
     if ($response['error']) {
-      domareghu_add_domain($s, $domain, $api);
+      if ($response['error_code'] != 500) {
+        domareghu_add_domain($s, $domain, $api);
+      } else {
+        echo "Authentikációs hiba: " . $domain['domain'] . "\n";
+      }
     } else {
       echo "A domain már a rendszerben van: " . $domain['domain'] . "\n";
-      print_r($response);
     }
   }
 
