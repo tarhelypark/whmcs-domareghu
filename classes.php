@@ -33,6 +33,7 @@ class Register {
   public $idcard_expire;      // 2022.11.28
   public $birth_date;         // 2022.11.28
   public $period;             // Recurring time in years (ex.: 3)
+  public $regtype;            // 'R' or 'T' for Register or Transfer
 }
 
 /**

@@ -195,12 +195,11 @@ function domareghu_SaveContactDetails($params) {
 
 function domareghu_GetEPPCode($params) {
   echo "<pre>";
-  var_dump($params);
   $r = domareghu_getRegisterObj($params, true);
   $r->payed = 0;
   $api = new DomareghuApi($params['api_url']);
 	$api->openHttpConnection();
-  if ($params["regtype"] == 'Register') {
+  if ($r->regtype == 'R') {
 	  $response = $api->sendCommand('register', $r);
   } else {
     $response = $api->sendCommand('transfer', $r);
@@ -218,7 +217,7 @@ function domareghu_GetEPPCode($params) {
 }
 
 function domareghu_RegisterNameserver($params) {
-    $username = $params["Username"];
+  $username = $params["Username"];
 	$password = $params["Password"];
 	$testmode = $params["TestMode"];
 	$tld = $params["tld"];
@@ -232,7 +231,7 @@ function domareghu_RegisterNameserver($params) {
 }
 
 function domareghu_ModifyNameserver($params) {
-    $username = $params["Username"];
+  $username = $params["Username"];
 	$password = $params["Password"];
 	$testmode = $params["TestMode"];
 	$tld = $params["tld"];
@@ -373,6 +372,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
     $params['notes'] = $client['notes'];
     $params['password'] = $client['password'];
     $params['regperiod'] = $domain['registrationperiod'];
+    $params['regtype'] = $domain['type'];
   }
 
   $r = new Register();
@@ -392,6 +392,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
   $r->note = $params['notes'];
   $r->md5_password = $params['password'];
   $r->period = $params['regperiod'];
+  $r->regtype = $params['regtype'] == 'Register' ? 'R' : 'T';
 
   if ($params['use_custom_fields'] == 'yes') {
     $r->vatnr = $params['customfields' . $params['custom_field_vatnr']];
