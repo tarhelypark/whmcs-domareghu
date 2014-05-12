@@ -34,6 +34,7 @@ class Register {
   public $birth_date;         // 2022.11.28
   public $period;             // Recurring time in years (ex.: 3)
   public $regtype;            // 'R' or 'T' for Register or Transfer
+  public $domain_id;          // Domain id (free text)
 }
 
 /**
@@ -58,6 +59,7 @@ class Syncronize extends Register {
   public $payed;          // 0/1
   public $reg_date;
   public $type;           // R: Register T: Transfer
+  public $deleted;        // 1 / 0: check deleted domains not only active
 }
 
 /**

@@ -12,12 +12,17 @@ function domareghu_sync_all_hu_domain() {
   connectToMySql();
   $result = select_query("tbldomains","","registrar = 'domareghu'","id");
 
-  $api = new DomareghuApi();
+  if (defined(DEV_SERVER_URL)) {
+    $api = new DomareghuApi(DEV_SERVER_URL);
+  } else {
+    $api = new DomareghuApi();
+  }
+
  	$api->openHttpConnection();
 
   while ($domain = mysql_fetch_assoc($result)) {
     $params = array();
-    $pos = strpos($domain['domain'], '.');
+    $pos = strrpos($domain['domain'], '.');
     $params['sld'] = substr($domain['domain'], 0, $pos);
     $params['tld'] = substr($domain['domain'], $pos + 1);
     $params['domainid'] = $domain['id'];
@@ -48,10 +53,8 @@ function domareghu_sync_all_hu_domain() {
     foreach($objValues AS $key=>$value) {
       $s->$key = $value;
     }
+    $s->deleted = 1;
 
-    $q = new QueryDomain();
-    $q->api_key = $s->api_key;
-    $q->name = $s->name;
     $response = $api->sendCommand('get_domain', $s);
 
     if ($response['error']) {

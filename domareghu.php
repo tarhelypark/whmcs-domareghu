@@ -393,6 +393,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
   $r->md5_password = $params['password'];
   $r->period = $params['regperiod'];
   $r->regtype = $params['regtype'] == 'Register' ? 'R' : 'T';
+  $r->domain_id = $params["domainid"];
 
   if ($params['use_custom_fields'] == 'yes') {
     $r->vatnr = $params['customfields' . $params['custom_field_vatnr']];
