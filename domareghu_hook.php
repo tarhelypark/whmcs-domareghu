@@ -128,6 +128,19 @@ function changeHuInvoiceItems($vars) {
   }
 }
 
+function disableDomainRegistrationConfirmation($vars) {
+  if ($vars["messagename"] == "Domain Registration Confirmation") {
+    $result = select_query("tbldomains", "*", array("id" => $vars["relid"]));
+    $domainData = mysql_fetch_array($result);
+    if ($domainData['registrar'] == 'domareghu') {
+      $ret = array();
+      $ret['abortsend'] = true;
+      return $merge_fields;
+    }
+  }
+}
+
 add_hook("AfterShoppingCartCheckout",10,"checkHuDomainDates");
 add_hook("AfterShoppingCartCheckout",20,"sendNewDomainToDomaregHu");
 add_hook("InvoiceCreated",10,"changeHuInvoiceItems");
+add_hook("EmailPreSend",10,"disableDomainRegistrationConfirmation");
