@@ -7,6 +7,7 @@
  * @copyright Tárhelypark.hu, 06 February, 2013
  **/
 
+
 define('SERVER_URL', 'http://ugyfel.domareg.hu/api/');
 
 class DomareghuApi {
@@ -14,7 +15,11 @@ class DomareghuApi {
   private $api_url;
 
   function __construct($api_url = SERVER_URL) {
-    $this->api_url = $api_url;
+    if (defined('DEV_SERVER_URL')) {
+      $this->api_url = DEV_SERVER_URL;
+    } else {
+      $this->api_url = $api_url;
+    }
   }
   /**
    * opens a HTTP connection

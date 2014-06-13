@@ -1,8 +1,4 @@
 <?php
-
-require_once('api.php');
-require_once('classes.php');
-require_once('syncall_config.php');
 require_once('domareghu.php');
 
 domareghu_sync_all_hu_domain();
@@ -12,12 +8,7 @@ function domareghu_sync_all_hu_domain() {
   connectToMySql();
   $result = select_query("tbldomains","","registrar = 'domareghu'","id");
 
-  if (defined(DEV_SERVER_URL)) {
-    $api = new DomareghuApi(DEV_SERVER_URL);
-  } else {
-    $api = new DomareghuApi();
-  }
-
+  $api = new DomareghuApi();
  	$api->openHttpConnection();
 
   while ($domain = mysql_fetch_assoc($result)) {
@@ -28,24 +19,13 @@ function domareghu_sync_all_hu_domain() {
     $params['domainid'] = $domain['id'];
     $params['api_key'] = DOMAREG_API_KEY;
     $params['use_custom_fields'] = DOMAREG_USE_CUSTOM_FIELDS;
+ 	  $params['custom_field_vatnr'] = DOMAREG_CUSTOM_FIELD_VATNR;
+ 	  $params['custom_field_idcard_nr'] = DOMAREG_CUSTOM_FIELD_IDCARD_NR;
+ 	  $params['custom_field_idcard_expire'] = DOMAREG_CUSTOM_FIELD_IDCARD_EXPIRE;
+ 	  $params['custom_field_birth_date'] = DOMAREG_CUSTOM_FIELD_BIRTH_DATE;
     if ($params['tld'] != 'hu') {continue;}
 
     echo "Domain feldolgozás: " . $domain['domain'] . "\n";
-
-    if (DOMAREG_USE_CUSTOM_FIELDS == 'yes') {
-      $customs = select_query("tblcustomfields","sortorder,value",
-      "tblcustomfieldsvalues.relid = " . $domain['userid'] . " and type='client'", '', '', 30,
-        "tblcustomfieldsvalues ON tblcustomfieldsvalues.fieldid=tblcustomfields.id");
-
-   	  while ($row = mysql_fetch_assoc($customs)) {
-   	    $params['customfields' . $row['sortorder']] = $row['value'];
-   	  }
-
-   	  $params['custom_field_vatnr'] = DOMAREG_CUSTOM_FIELD_VATNR;
-   	  $params['custom_field_idcard_nr'] = DOMAREG_CUSTOM_FIELD_IDCARD_NR;
-   	  $params['custom_field_idcard_expire'] = DOMAREG_CUSTOM_FIELD_IDCARD_EXPIRE;
-   	  $params['custom_field_birth_date'] = DOMAREG_CUSTOM_FIELD_BIRTH_DATE;
-    }
 
     $r = domareghu_getRegisterObj($params,true);
     $s = new Syncronize();
@@ -85,7 +65,7 @@ function domareghu_add_domain($s, $domain, $api) {
       $s->payed = '1';
       break;
     case 'Cancelled':
-      $s->status = 'D';
+      $s->status = 'C';
       $s->payed = '1';
       break;
     case 'Pending':
