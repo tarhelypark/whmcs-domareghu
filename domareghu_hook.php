@@ -135,7 +135,7 @@ function disableDomainRegistrationConfirmation($vars) {
     if ($domainData['registrar'] == 'domareghu') {
       $ret = array();
       $ret['abortsend'] = true;
-      return $merge_fields;
+      return $ret;
     }
   }
 }
