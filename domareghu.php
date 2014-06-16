@@ -7,8 +7,8 @@
  * @copyright Tárhelypark.hu, 06 February, 2013
  **/
 require_once('domareghu_config.php');
-require_once('api.php');
-require_once('classes.php');
+require_once('domareghu_api.php');
+require_once('domareghu_classes.php');
 
 /*
 function domareghu_getConfigArray() {
