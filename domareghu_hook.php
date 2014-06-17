@@ -7,7 +7,9 @@
  * @version V1.0
  * @copyright CodePlay Solutions Kft. - Tárhelypark, 20 September, 2013
  **/
-require_once($_SERVER['DOCUMENT_ROOT'] . '/modules/registrars/domareghu/domareghu.php');
+
+require_once(dirname(__FILE__) . '/../../modules/registrars/domareghu/domareghu.php');
+
  /**
   * sendNewDomainToDomaregHu function
   *
