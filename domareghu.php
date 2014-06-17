@@ -400,7 +400,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
 
   if (DOMAREG_USE_CUSTOM_FIELDS == 'on') {
     $result = select_query("tblcustomfields","sortorder,value",
-    "tblcustomfieldsvalues.relid = " . $domain['userid'] . " and type='client' ", '', '', 30,
+    "tblcustomfieldsvalues.relid = " . $params['userid'] . " and type='client' ", '', '', 30,
       "tblcustomfieldsvalues ON tblcustomfieldsvalues.fieldid=tblcustomfields.id");
     $cfields = array();
  	  while ($row = mysql_fetch_assoc($result)) {
