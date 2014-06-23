@@ -90,9 +90,9 @@ function domareghu_SaveDNS($params) {
 }
 
 function domareghu_RegisterDomain($params) {
-  // echo "<pre>";
+  //echo "<pre>";
   // echo "domareghu_RegisterDomain 1\n";
-  // var_dump($params);
+  //var_dump($params);
 
   $r = domareghu_getRegisterObj($params);
 
@@ -108,7 +108,7 @@ function domareghu_RegisterDomain($params) {
 	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
 	}
 
-	// echo "</pre>";
+	//echo "</pre>";
 	return $values;
 }
 
@@ -351,8 +351,7 @@ function domareghu_Sync($params) {
  * @author Péter Képes
  **/
 function domareghu_getRegisterObj($params, $from_database = false) {
-
-  $params['name'] = $params['sld'] . '.' . $params['tld'];
+  $params['original']['name'] = $params['sld'] . '.' . $params['tld'];
   if ($from_database) {
     $result = select_query("tbldomains","","id = " . $params["domainid"]);
     $domain = mysql_fetch_assoc($result);
@@ -360,47 +359,47 @@ function domareghu_getRegisterObj($params, $from_database = false) {
     $result = select_query("tblclients","","id = " . $domain['userid']);
     $client = mysql_fetch_assoc($result);
 
-    $params['name'] = $domain['domain'];
-    $params['userid'] = $client['id'];
-    $params['firstname'] = $client['firstname'];
-    $params['lastname'] = $client['lastname'];
-    $params['companyname'] = $client['companyname'];
-    $params['email'] = $client['email'];
-    $params['address1'] = $client['address1'];
-    $params['address2'] = $client['address2'];
-    $params['city'] = $client['city'];
-    $params['postcode'] = $client['postcode'];
-    $params['countrycode'] = $client['country'];
-    $params['phonenumber'] = $client['phonenumber'];
-    $params['notes'] = $client['notes'];
-    $params['password'] = $client['password'];
-    $params['regperiod'] = $domain['registrationperiod'];
-    $params['regtype'] = $domain['type'];
+    $params['original']['name'] = $domain['domain'];
+    $params['original']['userid'] = $client['id'];
+    $params['original']['firstname'] = $client['firstname'];
+    $params['original']['lastname'] = $client['lastname'];
+    $params['original']['companyname'] = $client['companyname'];
+    $params['original']['email'] = $client['email'];
+    $params['original']['address1'] = $client['address1'];
+    $params['original']['address2'] = $client['address2'];
+    $params['original']['city'] = $client['city'];
+    $params['original']['postcode'] = $client['postcode'];
+    $params['original']['countrycode'] = $client['country'];
+    $params['original']['phonenumber'] = $client['phonenumber'];
+    $params['original']['notes'] = $client['notes'];
+    $params['original']['password'] = $client['password'];
+    $params['original']['regperiod'] = $domain['registrationperiod'];
+    $params['original']['regtype'] = $domain['type'];
   }
 
   $r = new Register();
   $r->api_key = DOMAREG_API_KEY;
-  $r->name = $params['name'];
+  $r->name = $params['original']['name'];
   $r->payed = 1;
-  $r->user_id = $params['userid'];
-  $r->first_name = $params['firstname'];
-  $r->last_name = $params['lastname'];
-  $r->company_name = $params['companyname'];
-  $r->email = $params['email'];
-  $r->address = $params['address1'] . ' ' . $params['address2'];
-  $r->city = $params['city'];
-  $r->zip = $params['postcode'];
-  $r->country_code = $params['countrycode'];
-  $r->phone = $params['phonenumber'];
-  $r->note = $params['notes'];
-  $r->md5_password = $params['password'];
-  $r->period = $params['regperiod'];
-  $r->regtype = $params['regtype'] == 'Register' ? 'R' : 'T';
-  $r->domain_id = $params["domainid"];
+  $r->user_id = $params['original']['userid'];
+  $r->first_name = $params['original']['firstname'];
+  $r->last_name = $params['original']['lastname'];
+  $r->company_name = $params['original']['companyname'];
+  $r->email = $params['original']['email'];
+  $r->address = $params['original']['address1'] . ' ' . $params['original']['address2'];
+  $r->city = $params['original']['city'];
+  $r->zip = $params['original']['postcode'];
+  $r->country_code = $params['original']['countrycode'];
+  $r->phone = $params['original']['phonenumber'];
+  $r->note = $params['original']['notes'];
+  $r->md5_password = $params['original']['password'];
+  $r->period = $params['original']['regperiod'];
+  $r->regtype = $params['original']['regtype'] == 'Register' ? 'R' : 'T';
+  $r->domain_id = $params['original']["domainid"];
 
   if (DOMAREG_USE_CUSTOM_FIELDS == 'on') {
     $result = select_query("tblcustomfields","sortorder,value",
-    "tblcustomfieldsvalues.relid = " . $params['userid'] . " and type='client' ", '', '', 30,
+    "tblcustomfieldsvalues.relid = " . $params['original']['userid'] . " and type='client' ", '', '', 30,
       "tblcustomfieldsvalues ON tblcustomfieldsvalues.fieldid=tblcustomfields.id");
     $cfields = array();
  	  while ($row = mysql_fetch_assoc($result)) {
