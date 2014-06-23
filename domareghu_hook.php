@@ -8,7 +8,11 @@
  * @copyright CodePlay Solutions Kft. - Tárhelypark, 20 September, 2013
  **/
 
-require_once(dirname(__FILE__) . '/../../modules/registrars/domareghu/domareghu.php');
+if (strpos(dirname(__FILE__), 'modules/registrars/domareghu') === false) {
+  require_once(dirname(__FILE__) . '/../../modules/registrars/domareghu/domareghu.php');
+} else {
+  require_once('domareghu.php');
+}
 
  /**
   * sendNewDomainToDomaregHu function
@@ -17,7 +21,6 @@ require_once(dirname(__FILE__) . '/../../modules/registrars/domareghu/domareghu.
   * @author Péter Képes
   **/
 function sendNewDomainToDomaregHu($vars) {
-  // Change this username to your admin username!
   $apiUsername = 'api-client';
   $domains = $vars["Domains"];
 
@@ -29,19 +32,6 @@ function sendNewDomainToDomaregHu($vars) {
       $userId = $domainData["userid"];
 
       if(endsWith(strtolower($domainName), ".hu")) {
-
-        /*$table = "tbldomains";
-        $update = array("registrar"=>"domareghu");
-        $where = array("id"=>$domainData["id"]);
-        update_query($table,$update,$where);
-
-        $command = "domainrequestepp";
-        $adminuser = $apiUsername;
-        $values["domainid"] = $domain;
-        $results = localAPI($command,$values,$adminuser);*/
-
-        // echo "<pre>";
-        // var_dump($params);
         $d = array('domainid' => $domain);
         $r = domareghu_getRegisterObj($d, true);
         $r->payed = 0;
@@ -131,7 +121,7 @@ function changeHuInvoiceItems($vars) {
 }
 
 function disableDomainRegistrationConfirmation($vars) {
-  if ($vars["messagename"] == "Domain Registration Confirmation") {
+  if ($vars["messagename"] == "Domain Registration Confirmation" || $vars["messagename"] == "Domain Transfer Initiated") {
     $result = select_query("tbldomains", "*", array("id" => $vars["relid"]));
     $domainData = mysql_fetch_array($result);
     if ($domainData['registrar'] == 'domareghu') {
