@@ -24,6 +24,9 @@ function domareghu_getConfigArray() {
 	return $configarray;
 }*/
 
+function domareghu_getConfigArray() {
+  return array();
+}
 function domareghu_GetNameservers($params) {
   // echo "<pre>";
   // var_dump($params);
@@ -375,6 +378,7 @@ function domareghu_getRegisterObj($params, $from_database = false) {
     $params['original']['password'] = $client['password'];
     $params['original']['regperiod'] = $domain['registrationperiod'];
     $params['original']['regtype'] = $domain['type'];
+    $params['original']["domainid"] = $domain['id'];
   }
 
   $r = new Register();
