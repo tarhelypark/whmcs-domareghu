@@ -33,7 +33,7 @@ function domareghu_GetNameservers($params) {
   //echo "dev server:" . DEV_SERVER_URL;
   $q = new QueryDomain();
   $q->api_key = DOMAREG_API_KEY;
-  $q->name = $params['sld'] . '.' . $params['tld'];
+  $q->name = $params['domainname'];
 
   // var_dump($q);
 
@@ -93,14 +93,14 @@ function domareghu_SaveDNS($params) {
 }
 
 function domareghu_RegisterDomain($params) {
-  //echo "<pre>";
+  echo "<pre>";
   // echo "domareghu_RegisterDomain 1\n";
   //var_dump($params);
 
   $r = domareghu_getRegisterObj($params);
 
-  // echo "domareghu_RegisterDomain 2\n";
-  // // var_dump($r);
+  //echo "domareghu_RegisterDomain 2\n";
+  //var_dump($r);
 
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
@@ -146,7 +146,7 @@ function domareghu_TransferDomain($params) {
 function domareghu_RenewDomain($params) {
   $r = new Renew();
   $r->api_key = DOMAREG_API_KEY;
-  $r->name = $params['sld'] . '.' . $params['tld'];
+  $r->name = $params['domainname'];
   $r->period = $params["regperiod"];
   // echo "<pre>";
 	$api = new DomareghuApi();
@@ -255,7 +255,7 @@ function domareghu_DeleteNameserver($params) {
 }
 
 function domareghu_TransferSync($params) {
-  $params['name'] = $params['sld'] . '.' . $params['tld'];
+  $params['name'] = $params['domainname'];
   $q = new QueryDomain();
   $q->api_key = DOMAREG_API_KEY;
   $q->name = $params['name'];
@@ -305,7 +305,7 @@ function domareghu_TransferSync($params) {
  **/
 function domareghu_Sync($params) {
   # Query domain expiry information
-  $params['name'] = $params['sld'] . '.' . $params['tld'];
+  $params['name'] = $params['domainname'];
   $q = new QueryDomain();
   $q->api_key = DOMAREG_API_KEY;
   $q->name = $params['name'];
@@ -354,7 +354,7 @@ function domareghu_Sync($params) {
  * @author Péter Képes
  **/
 function domareghu_getRegisterObj($params, $from_database = false) {
-  $params['original']['name'] = $params['sld'] . '.' . $params['tld'];
+  $params['original']['name'] = $params['domainname'];
   if ($from_database) {
     $result = select_query("tbldomains","","id = " . $params["domainid"]);
     $domain = mysql_fetch_assoc($result);
