@@ -7,8 +7,7 @@
  * @copyright Tárhelypark.hu, 06 February, 2013
  **/
 
-
-define('SERVER_URL', 'http://ugyfel.domareg.hu/api/');
+define('SERVER_URL', 'https://ugyfel.domareg.hu/api/');
 
 class DomareghuApi {
   private $ch;
@@ -32,6 +31,7 @@ class DomareghuApi {
     // Init connection
     $this->ch = curl_init();
     curl_setopt($this->ch,CURLOPT_POST,true);
+    curl_setopt($this->ch,CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($this->ch,CURLOPT_RETURNTRANSFER,true);
     curl_setopt($this->ch,CURLOPT_HTTPHEADER,array('Content-Type: application/json','Accept: application/json'));
   }
