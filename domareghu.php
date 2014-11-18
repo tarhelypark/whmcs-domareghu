@@ -255,7 +255,7 @@ function domareghu_DeleteNameserver($params) {
 }
 
 function domareghu_TransferSync($params) {
-  $params['name'] = $params['domainname'];
+  $params['name'] = $params['sld'] . '.' . $params['tld'];
   $q = new QueryDomain();
   $q->api_key = DOMAREG_API_KEY;
   $q->name = $params['name'];
@@ -305,7 +305,7 @@ function domareghu_TransferSync($params) {
  **/
 function domareghu_Sync($params) {
   # Query domain expiry information
-  $params['name'] = $params['domainname'];
+  $params['name'] = $params['sld'] . '.' . $params['tld'];
   $q = new QueryDomain();
   $q->api_key = DOMAREG_API_KEY;
   $q->name = $params['name'];
