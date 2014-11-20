@@ -54,12 +54,12 @@ class QueryDomain {
  * @author Péter Képes
  **/
 class Syncronize extends Register {
-  public $status;         // Status (I, M, R, A, C, D, E)
-  public $expiry_date;    // Domain expiration date
-  public $payed;          // 0/1
+  public $status;               // Status (I, M, R, A, C, D, E)
+  public $expiry_date;          // Domain expiration date
+  public $payed;                // 0/1
   public $reg_date;
-  public $type;           // R: Register T: Transfer
-  public $deleted;        // 1 / 0: check deleted domains not only active
+  public $type;                 // R: Register T: Transfer
+  public $deleted;              // 1 / 0: check deleted domains not only active
 }
 
 /**
