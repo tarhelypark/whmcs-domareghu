@@ -74,10 +74,6 @@ function domareghu_SaveDNS($params) {
 }
 
 function domareghu_RegisterDomain($params) {
-  echo "<pre>";
-  var_dump($params);
-  echo "</pre>";
-  exit;
   $r = domareghu_getRegisterObj($params);
 
 	$api = new DomareghuApi();
