@@ -10,14 +10,32 @@ require_once('domareghu_config.php');
 require_once('domareghu_api.php');
 require_once('domareghu_classes.php');
 
+/*
+function domareghu_getConfigArray() {
+	$configarray = array(
+	 "api_key" => array( "Type" => "text", "Size" => "50", "Description" => "Enter your API key here", ),
+   "api_url" => array( "Type" => "text", "Size" => "100", "Description" => "API url for domareg.hu", "Default" => "http://ugyfel.domareg.hu/api/"),
+	 "use_custom_fields" => array( "Type" => "yesno", "Description" => "Use custom customer's fileds"),
+	 "custom_field_vatnr" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of vat nr" ),
+	 "custom_field_idcard_nr" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of customer's idcard nr"),
+	 "custom_field_idcard_expire" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of customer's idcard expiration date"),
+	 "custom_field_birth_date" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of customer's birth date")
+	);
+	return $configarray;
+}*/
+
 function domareghu_getConfigArray() {
   return array();
 }
-
 function domareghu_GetNameservers($params) {
+  // echo "<pre>";
+  // var_dump($params);
+  //echo "dev server:" . DEV_SERVER_URL;
   $q = new QueryDomain();
   $q->api_key = DOMAREG_API_KEY;
   $q->name = $params['domainname'];
+
+  // var_dump($q);
 
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
@@ -32,6 +50,7 @@ function domareghu_GetNameservers($params) {
 	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
 	}
 
+	//echo "</pre>";
 	return $values;
 }
 
@@ -74,7 +93,14 @@ function domareghu_SaveDNS($params) {
 }
 
 function domareghu_RegisterDomain($params) {
+  //echo "<pre>";
+  // echo "domareghu_RegisterDomain 1\n";
+  //var_dump($params);
+
   $r = domareghu_getRegisterObj($params);
+
+  //echo "domareghu_RegisterDomain 2\n";
+  //var_dump($r);
 
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
@@ -85,11 +111,19 @@ function domareghu_RegisterDomain($params) {
 	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
 	}
 
+	//echo "</pre>";
 	return $values;
 }
 
 function domareghu_TransferDomain($params) {
+  // echo "<pre>";
+  // echo "domareghu_TransferDomain 1\n";
+  // var_dump($params);
+
   $r = domareghu_getRegisterObj($params);
+
+  // echo "domareghu_TransferDomain 2\n";
+  // var_dump($r);
 
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
@@ -105,6 +139,7 @@ function domareghu_TransferDomain($params) {
     #update_query($table,$update,$where);
 	}
 
+	// echo "</pre>";
 	return $values;
 }
 
@@ -113,7 +148,7 @@ function domareghu_RenewDomain($params) {
   $r->api_key = DOMAREG_API_KEY;
   $r->name = $params['domainname'];
   $r->period = $params["regperiod"];
-
+  // echo "<pre>";
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
 	$response = $api->sendCommand('renew', $r);
@@ -123,6 +158,7 @@ function domareghu_RenewDomain($params) {
 	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
 	}
 
+  // echo "</pre>";
 	return $values;
 }
 
@@ -163,6 +199,8 @@ function domareghu_SaveContactDetails($params) {
 }
 
 function domareghu_GetEPPCode($params) {
+  // echo "<pre>";
+  // var_dump($params);
   $r = domareghu_getRegisterObj($params, true);
   $r->payed = 0;
   $api = new DomareghuApi();
@@ -180,6 +218,7 @@ function domareghu_GetEPPCode($params) {
 	  $values["eppcode"] ='Sikeres nyilvántartásba vétel: ' . $r->name;
 	}
 
+  // echo "</pre>";
   return $values;
 }
 
