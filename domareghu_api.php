@@ -32,6 +32,7 @@ class DomareghuApi {
     $this->ch = curl_init();
     curl_setopt($this->ch,CURLOPT_POST,true);
     curl_setopt($this->ch,CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($this->ch,CURLOPT_SSL_VERIFYHOST, FALSE);
     curl_setopt($this->ch,CURLOPT_RETURNTRANSFER,true);
     curl_setopt($this->ch,CURLOPT_HTTPHEADER,array('Content-Type: application/json','Accept: application/json'));
   }
