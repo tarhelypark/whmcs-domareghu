@@ -199,8 +199,6 @@ function domareghu_SaveContactDetails($params) {
 }
 
 function domareghu_GetEPPCode($params) {
-  // echo "<pre>";
-  // var_dump($params);
   $r = domareghu_getRegisterObj($params, true);
   $r->payed = 0;
   $api = new DomareghuApi();
@@ -218,7 +216,6 @@ function domareghu_GetEPPCode($params) {
 	  $values["eppcode"] ='Sikeres nyilvántartásba vétel: ' . $r->name;
 	}
 
-  // echo "</pre>";
   return $values;
 }
 
@@ -354,31 +351,52 @@ function domareghu_Sync($params) {
  * @author Péter Képes
  **/
 function domareghu_getRegisterObj($params, $from_database = false) {
+  $result = select_query("tbldomains","","id = " . $params["domainid"]);
+  $domain = mysql_fetch_assoc($result);
+
+  $result = select_query("tblclients","","id = " . $domain['userid']);
+  $client = mysql_fetch_assoc($result);
+
   $params['original']['name'] = $params['domainname'];
+  $params['original']['email'] = $client['email'];
+  $params['original']['userid'] = $client['id'];
+  $params['original']['notes'] = $client['notes'];
+  $params['original']['password'] = $client['password'];
+
   if ($from_database) {
-    $result = select_query("tbldomains","","id = " . $params["domainid"]);
-    $domain = mysql_fetch_assoc($result);
-
-    $result = select_query("tblclients","","id = " . $domain['userid']);
-    $client = mysql_fetch_assoc($result);
-
     $params['original']['name'] = $domain['domain'];
-    $params['original']['userid'] = $client['id'];
-    $params['original']['firstname'] = $client['firstname'];
-    $params['original']['lastname'] = $client['lastname'];
-    $params['original']['companyname'] = $client['companyname'];
-    $params['original']['email'] = $client['email'];
-    $params['original']['address1'] = $client['address1'];
-    $params['original']['address2'] = $client['address2'];
-    $params['original']['city'] = $client['city'];
-    $params['original']['postcode'] = $client['postcode'];
-    $params['original']['countrycode'] = $client['country'];
-    $params['original']['phonenumber'] = $client['phonenumber'];
-    $params['original']['notes'] = $client['notes'];
-    $params['original']['password'] = $client['password'];
     $params['original']['regperiod'] = $domain['registrationperiod'];
     $params['original']['regtype'] = $domain['type'];
     $params['original']["domainid"] = $domain['id'];
+
+    $result = select_query("tblorders","","id = " . $domain['orderid']);
+    $order = mysql_fetch_assoc($result);
+
+    if ($order['contactid'] == 0) {
+      $params['original']['firstname'] = $client['firstname'];
+      $params['original']['lastname'] = $client['lastname'];
+      $params['original']['companyname'] = $client['companyname'];
+      $params['original']['address1'] = $client['address1'];
+      $params['original']['address2'] = $client['address2'];
+      $params['original']['city'] = $client['city'];
+      $params['original']['postcode'] = $client['postcode'];
+      $params['original']['countrycode'] = $client['country'];
+      $params['original']['phonenumber'] = $client['phonenumber'];
+
+    } else {
+      $result = select_query("tblcontacts","","id = " . $order['contactid']);
+      $contact = mysql_fetch_assoc($result);
+
+      $params['original']['firstname'] = $contact['firstname'];
+      $params['original']['lastname'] = $contact['lastname'];
+      $params['original']['companyname'] = $contact['companyname'];
+      $params['original']['address1'] = $contact['address1'];
+      $params['original']['address2'] = $contact['address2'];
+      $params['original']['city'] = $contact['city'];
+      $params['original']['postcode'] = $contact['postcode'];
+      $params['original']['countrycode'] = $contact['country'];
+      $params['original']['phonenumber'] = $contact['phonenumber'];
+    }
   }
 
   $r = new Register();
