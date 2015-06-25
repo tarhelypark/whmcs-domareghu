@@ -10,20 +10,6 @@ require_once('domareghu_config.php');
 require_once('domareghu_api.php');
 require_once('domareghu_classes.php');
 
-/*
-function domareghu_getConfigArray() {
-	$configarray = array(
-	 "api_key" => array( "Type" => "text", "Size" => "50", "Description" => "Enter your API key here", ),
-   "api_url" => array( "Type" => "text", "Size" => "100", "Description" => "API url for domareg.hu", "Default" => "http://ugyfel.domareg.hu/api/"),
-	 "use_custom_fields" => array( "Type" => "yesno", "Description" => "Use custom customer's fileds"),
-	 "custom_field_vatnr" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of vat nr" ),
-	 "custom_field_idcard_nr" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of customer's idcard nr"),
-	 "custom_field_idcard_expire" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of customer's idcard expiration date"),
-	 "custom_field_birth_date" => array( "Type" => "text", "Size" => "2", "Description" => "Custom field number of customer's birth date")
-	);
-	return $configarray;
-}*/
-
 function domareghu_getConfigArray() {
   return array();
 }
