@@ -132,7 +132,30 @@ function disableDomainRegistrationConfirmation($vars) {
   }
 }
 
+/**
+ * changeDomaregHuPassword function
+ *
+ * Hook for password change
+ *
+ * @return void
+ * @author Péter Képes
+ **/
+function changeDomaregHuPassword($vars) {
+  $vars['userid'];
+  $vars['password'];
+
+  $params['user_id'] = $vars['userid'];
+  $params['password'] = $vars['password'];
+  $params['api_key'] = DOMAREG_API_KEY;
+
+  $api = new DomareghuApi();
+	$api->openHttpConnection();
+	$response = $api->sendCommand('change_password', $params);
+	$api->closeHttpConnection();
+}
+
 add_hook("AfterShoppingCartCheckout",10,"checkHuDomainDates");
 add_hook("AfterShoppingCartCheckout",20,"sendNewDomainToDomaregHu");
 add_hook("InvoiceCreated",10,"changeHuInvoiceItems");
 add_hook("EmailPreSend",10,"disableDomainRegistrationConfirmation");
+add_hook("ClientChangePassword",10,"changeDomaregHuPassword");
