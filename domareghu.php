@@ -385,6 +385,11 @@ function domareghu_getRegisterObj($params, $from_database = false) {
     }
   }
 
+  // ISZT special country code differ from ISO
+  if ($params['original']['countrycode'] == 'GB') {
+    $params['original']['countrycode'] = 'UK';
+  }
+
   $r = new Register();
   $r->api_key = DOMAREG_API_KEY;
   $r->name = $params['original']['name'];
