@@ -14,14 +14,9 @@ function domareghu_getConfigArray() {
   return array();
 }
 function domareghu_GetNameservers($params) {
-  // echo "<pre>";
-  // var_dump($params);
-  //echo "dev server:" . DEV_SERVER_URL;
   $q = new QueryDomain();
   $q->api_key = DOMAREG_API_KEY;
-  $q->name = $params['domainname'];
-
-  // var_dump($q);
+  $q->name = $params['original']['domainname'];
 
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
@@ -35,8 +30,6 @@ function domareghu_GetNameservers($params) {
 	if ($response['error'] == true) {
 	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
 	}
-
-	//echo "</pre>";
 	return $values;
 }
 
@@ -79,15 +72,7 @@ function domareghu_SaveDNS($params) {
 }
 
 function domareghu_RegisterDomain($params) {
-  //echo "<pre>";
-  // echo "domareghu_RegisterDomain 1\n";
-  //var_dump($params);
-
   $r = domareghu_getRegisterObj($params);
-
-  //echo "domareghu_RegisterDomain 2\n";
-  //var_dump($r);
-
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
 	$response = $api->sendCommand('register', $r);
@@ -97,20 +82,11 @@ function domareghu_RegisterDomain($params) {
 	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
 	}
 
-	//echo "</pre>";
 	return $values;
 }
 
 function domareghu_TransferDomain($params) {
-  // echo "<pre>";
-  // echo "domareghu_TransferDomain 1\n";
-  // var_dump($params);
-
   $r = domareghu_getRegisterObj($params);
-
-  // echo "domareghu_TransferDomain 2\n";
-  // var_dump($r);
-
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
 	$response = $api->sendCommand('transfer', $r);
@@ -132,9 +108,8 @@ function domareghu_TransferDomain($params) {
 function domareghu_RenewDomain($params) {
   $r = new Renew();
   $r->api_key = DOMAREG_API_KEY;
-  $r->name = $params['domainname'];
+  $r->name = $params['original']['domainname'];
   $r->period = $params["regperiod"];
-  // echo "<pre>";
 	$api = new DomareghuApi();
 	$api->openHttpConnection();
 	$response = $api->sendCommand('renew', $r);
@@ -144,7 +119,6 @@ function domareghu_RenewDomain($params) {
 	  $values["error"] = $response['error_code'] . ' - ' . $response['error_message'];
 	}
 
-  // echo "</pre>";
 	return $values;
 }
 
