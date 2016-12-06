@@ -101,17 +101,34 @@ function changeHuInvoiceItems($vars) {
   $items = select_query("tblinvoiceitems", "*", array("invoiceid" => $invoiceId));
 
   while ($item = mysql_fetch_assoc($items)) {
-    if ($item['type'] == 'DomainTransfer' && strpos($item['description'],'.hu ') !== false) {
-      $desc = str_replace('Év','db',$item['description']);
+    $desc = $item['description'];
+    $changed = false;
 
-      $table = "tblinvoiceitems";
-      $update = array("description"=> $desc);
-      $where = array("id"=>$item["id"]);
-      update_query($table,$update,$where);
+    if ($item['type'] == 'DomainTransfer' && strpos($desc, '.hu ') !== false) {
+      $desc = str_replace('év', 'db', $desc);
+      $desc = str_replace('Év', 'db', $desc);
+      $changed = true;
     }
-    if ($item['type'] == 'DomainRegister' && strpos($item['description'],'.hu ') !== false && strpos($item['description'],'1 Év') !== false) {
-      $desc = substr($item['description'], 0, strpos($item['description'],'1 Év')) . '2 Év';
 
+    if ($item['type'] == 'DomainRegister' && strpos($desc, '.hu ') !== false &&
+      (strpos($desc, '1 Év') !== false || strpos($desc, '1 év') !== false) ) {
+      $desc = str_replace('1 év', '2 év', $desc);
+      $desc = str_replace('1 Év', '2 Év', $desc);
+      $pattern = '/\((\d{4})\/\d{2}\/\d{2} - (\d{4})\/\d{2}\/\d{2}\)/';
+
+      preg_match($pattern, $desc, $matches );
+
+      $date_range = $matches[0];
+      $year_from = intval($matches[1]);
+      $year_to = intval($matches[2]);
+
+      $new_date_range = str_replace(' - ' . $year_to, ' - ' . ($year_from + 2), $date_range);
+      $desc = str_replace($date_range, $new_date_range, $desc);
+
+      $changed = true;
+    }
+
+    if ($changed) {
       $table = "tblinvoiceitems";
       $update = array("description"=> $desc);
       $where = array("id"=>$item["id"]);
@@ -157,5 +174,6 @@ function changeDomaregHuPassword($vars) {
 add_hook("AfterShoppingCartCheckout",10,"checkHuDomainDates");
 add_hook("AfterShoppingCartCheckout",20,"sendNewDomainToDomaregHu");
 add_hook("InvoiceCreated",10,"changeHuInvoiceItems");
+add_hook("UpdateInvoiceTotal",10,"changeHuInvoiceItems");
 add_hook("EmailPreSend",10,"disableDomainRegistrationConfirmation");
 add_hook("ClientChangePassword",10,"changeDomaregHuPassword");
